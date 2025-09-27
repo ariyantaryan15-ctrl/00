@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Amplop Interaktif — Klik untuk Membuka</title>
+  <style>
+    :root{
+      --bg:#f6efe9;
+      --env:#c0392b;
+      --paper:#fffdf8;
+      --accent:#8e44ad;
+      --shadow: rgba(0,0,0,0.15);
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(180deg, var(--bg) 0%, #f0e6dd 100%);
+      padding:2rem;
+    }
+
+    .scene{
+      width:340px; height:220px; position:relative; perspective:1000px;
+    }
+
+    .envelope{
+      width:100%; height:100%; position:relative; transform-style:preserve-3d;
+      transition: transform 600ms cubic-bezier(.2,.9,.3,1);
+    }
+
+    .body{
+      position:absolute; inset:0; background: linear-gradient(180deg,#e74c3c 0%, var(--env) 100%);
+      border-radius:10px; box-shadow: 0 12px 25px var(--shadow), inset 0 -6px 12px rgba(0,0,0,0.08);
+      overflow:hidden; display:flex; align-items:flex-end; justify-content:center;
+    }
+
+    .flap{
+      position:absolute; left:0; right:0; top:0; height:60%;
+      transform-origin:50% 100%;
+      background: linear-gradient(180deg,#ff6b6b, #d94a46);
+      clip-path: polygon(0 0,100% 0,50% 100%);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      transition: transform 600ms cubic-bezier(.2,.9,.3,1);
+    }
+
+    .paper-wrap{
+      position:absolute; inset:14% 8% 6% 8%;
+      display:flex; align-items:flex-start; justify-content:center; pointer-events:none;
+    }
+    .paper{
+      width:92%; height:86%; background:var(--paper); border-radius:6px; box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      transform: translateY(20%); transition: transform 700ms cubic-bezier(.2,.9,.25,1), opacity 400ms; opacity:0; padding:22px;
+      box-sizing:border-box; overflow:auto;
+      font-size:15px; line-height:1.55; color:#2c2c2c;
+    }
+
+    .envelope.open .flap{ transform: rotateX(-180deg) translateZ(0); }
+    .envelope.open .paper{ transform: translateY(-6%); opacity:1; pointer-events:auto; }
+
+    .paper::before{
+      content:""; position:absolute; left:0; right:0; top:0; height:12px; border-radius:6px 6px 0 0; box-shadow: inset 0 2px 0 rgba(0,0,0,0.03);
+    }
+
+    .message{ white-space:pre-wrap; font-family: 'Georgia', 'Times New Roman', serif; font-size:15px; color:#2b2b2b; }
+
+    .hint{ text-align:center; margin-top:14px; color:#7a6f6f; font-size:13px; }
+
+    .controls{ display:flex; gap:8px; justify-content:center; margin-top:14px; }
+    .btn{ background:transparent; border:1px solid rgba(0,0,0,0.08); padding:8px 12px; border-radius:8px; cursor:pointer; font-size:13px; }
+    .btn:active{ transform:translateY(1px); }
+
+    @media (max-width:420px){ .scene{ width:300px; height:200px; } }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="scene">
+      <div class="envelope" id="envelope">
+        <div class="body"></div>
+        <div class="flap" id="flap"></div>
+        <div class="paper-wrap">
+          <div class="paper" id="paper">
+            <div class="message">Pada akhirnya, cinta yang dewasa adalah tentang keberanian untuk tetap menggenggam tangan satu sama lain meski badai datang tanpa diduga tentang memilih untuk tetap berdiri bersama, meski dunia memberi seribu alasan untuk menyerah. Jatuh cinta itu mudah, tetapi memilih untuk terus bertahan itulah bukti cinta yang sesungguhnya</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint">Klik amplop untuk membuka. Tekan sekali lagi untuk menutup.</div>
+    <div class="controls">
+      <button class="btn" id="toggle">Buka/Tutup</button>
+      <button class="btn" id="download">Unduh Teks</button>
+    </div>
+  </div>
+
+  <!-- Musik sorai -->
+  <audio id="bgm" loop>
+    <source src="c:\Users\ryan & kevina\Downloads\WhatsApp Audio 2025-09-27 at 17.24.58.mp4" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const envelope = document.getElementById('envelope');
+    const toggle = document.getElementById('toggle');
+    const download = document.getElementById('download');
+    const bgm = document.getElementById('bgm');
+
+    function setOpen(open){
+      if(open) envelope.classList.add('open'); else envelope.classList.remove('open');
+    }
+
+    envelope.addEventListener('click', ()=>{
+      const isOpen = envelope.classList.toggle('open');
+      if(isOpen){ bgm.play(); } else { bgm.pause(); bgm.currentTime = 0; }
+    });
+
+    toggle.addEventListener('click', ()=>{
+      const isOpen = envelope.classList.toggle('open');
+      if(isOpen){ bgm.play(); } else { bgm.pause(); bgm.currentTime = 0; }
+    });
+
+    download.addEventListener('click', ()=>{
+      const text = document.querySelector('.message').innerText;
+      const blob = new Blob([text], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'pesan_cinta.txt'; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
